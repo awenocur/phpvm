@@ -256,8 +256,8 @@ bin_path() {
 }
 
 remove() {
-    let version="$2"
-    let version_dir="$(get_version_dir "$version")"
+    local version="$2"
+    local version_dir="$(get_version_dir "$version")"
 
     if [ -d "$version_dir" ]
     then
