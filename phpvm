@@ -2,13 +2,13 @@
 # a php version manager
 #
 # @todo quiet mode with log files
-# @todo handling configure options
 # @todo check deps before starting
 
 phpvm_path="$HOME/.phpvm"
 old_rels_cache_path="$phpvm_path/tmp/old_releases.html"
 rels_cache_path="$phpvm_path/tmp/releases.html"
 downloads_path="$phpvm_path/tmp"
+configure_params=()
 
 usage() {
     echo "Usage: phpvm cmd"
@@ -143,12 +143,19 @@ get_tar_url() {
 
 install() {
     local version="$2"
-    # @todo
     local -a params=("$@")
-    local -a configure_params=()
+    configure_params=(--enable-pcntl --with-libedit=/usr --prefix=$(get_version_dir "$version") --exec-prefix=$(get_version_dir "$version") --with-curl=/usr --with-openssl=yes --with-zlib=yes)
     for num in `seq 2 $((${#params[@]} - 1))`
     do
-	configure_params[$((${num}-2))]="${params[$num]}"
+        local assignment=${#params[@]}
+        for opt in `seq 0 $((${#configure_params[@]} - 1))`
+        do
+            if [ ${params[$num]%%=*} = ${configure_params[$opt]%%=*} ]
+            then
+                local assignment=$opt
+            fi
+        done
+        configure_params[${assignment}]="${params[$num]}"
     done
 
     # init cache files
