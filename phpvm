@@ -116,7 +116,7 @@ install_composer() {
     fi
 
     echo "#!/usr/bin/env bash
-$php_bin $install_path/composer.phar
+$php_bin $install_path/composer.phar "'"$@"'"
 " > "$install_path/composer"
 
     chmod +x "$install_path/composer"
