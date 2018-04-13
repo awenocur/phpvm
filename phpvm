@@ -108,7 +108,11 @@ install_composer() {
 
     if [ ! -f "$installed_path" ]
     then
-        wget -O "$installed_path" 'https://getcomposer.org/download/1.0.0-beta1/composer.phar'
+        if [ ! -f ${downloads_path}/composer-setup.php ]
+        then
+            ${php_bin} -r "copy('https://getcomposer.org/installer', '${downloads_path}/composer-setup.php');"
+        fi
+        ${php_bin} ${downloads_path}/composer-setup.php --quiet --install-dir=${install_path}
     fi
 
     echo "#!/usr/bin/env bash
