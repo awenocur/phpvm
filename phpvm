@@ -20,6 +20,7 @@ usage() {
     echo -e "\tinstall version\tinstalls a remote php version"
     echo -e "\tbin\t\tget bin path for an install"
     echo -e "\tremove version\tremoves a php version"
+    echo -e "\tselect version\tselects a php version"
     echo ""
     echo "Examples:"
     echo -e "\tphpvm install 7.0.4"
@@ -267,6 +268,25 @@ remove() {
     echo "Removed $version at $version_dir"
 }
 
+select_version()
+{
+    local version="$2"
+    local version_dir="$(get_version_dir "$version")"
+
+    if [ -d "$version_dir" ]
+    then
+        rm -f $phpvm_path/current/*
+        for subdir in bin lib src
+        do if [ -d ${version_dir}/$subdir ]
+           then
+               ln -s ${version_dir}/$subdir $phpvm_path/current
+           fi
+        done
+    else
+        echo version $version not installed
+    fi
+}
+
 dir_setup
 case "$1" in
     help)
@@ -292,6 +312,9 @@ case "$1" in
     install)
         install "$@"
         exit 0;
+        ;;
+    "select")
+	select_version "$@"
         ;;
     *)
         usage
